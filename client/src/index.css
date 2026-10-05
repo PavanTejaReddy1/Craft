@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CSS VARIABLES — single source of truth for the design system.
+   Light values in :root, dark overrides in .dark.
+   All backgrounds, surfaces, borders, and text use these variables
+   so toggling .dark on <html> switches the entire app automatically.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Page background layers */
+  --bg-base:      #f9fafb;   /* gray-50  — outermost page bg */
+  --bg-surface:   #ffffff;   /* white    — cards, panels    */
+  --bg-raised:    #f3f4f6;   /* gray-100 — inputs, hover    */
+  --bg-muted:     #e5e7eb;   /* gray-200 — skeleton, dividers */
+
+  /* Borders */
+  --border:       #e5e7eb;   /* gray-200 */
+  --border-strong:#d1d5db;   /* gray-300 */
+
+  /* Text */
+  --text-primary: #111827;   /* gray-900 */
+  --text-secondary:#6b7280;  /* gray-500 */
+  --text-muted:   #9ca3af;   /* gray-400 */
+
+  /* Interactive */
+  --btn-primary-bg:   #111827;  /* gray-900 */
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover:#1f2937;  /* gray-800 */
+
+  /* Input */
+  --input-bg:     #ffffff;
+  --input-border: #e5e7eb;
+  --input-text:   #111827;
+  --input-placeholder: #9ca3af;
+  --input-ring:   #111827;
+}
+
+.dark {
+  --bg-base:      #030712;   /* gray-950 */
+  --bg-surface:   #111827;   /* gray-900 */
+  --bg-raised:    #1f2937;   /* gray-800 */
+  --bg-muted:     #374151;   /* gray-700 */
+
+  --border:       rgba(255,255,255,0.08);
+  --border-strong:rgba(255,255,255,0.16);
+
+  --text-primary: #f9fafb;   /* gray-50  */
+  --text-secondary:#9ca3af;  /* gray-400 */
+  --text-muted:   #6b7280;   /* gray-500 */
+
+  --btn-primary-bg:   #ffffff;
+  --btn-primary-text: #030712;
+  --btn-primary-hover:#f3f4f6;
+
+  --input-bg:     #1f2937;
+  --input-border: rgba(255,255,255,0.1);
+  --input-text:   #f9fafb;
+  --input-placeholder: #6b7280;
+  --input-ring:   rgba(255,255,255,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════════════════ */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  h1,h2,h3,h4,h5,h6 { font-weight: 600; letter-spacing: -0.02em; }
+
+  /* Every plain bg-white / bg-gray-50 div picks up the right color */
+  /* Override the most common hardcoded Tailwind utilities via CSS vars */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* ── Layout ── */
+  .container-app {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    @apply rounded-xl shadow-card;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-hover;
+    &:hover { border-color: var(--border-strong); }
+  }
+
+  /* Always-dark cards (hero section etc.) */
+  .card-dark       { @apply bg-white/[0.04] border border-white/[0.08] rounded-xl; }
+  .card-dark-hover { @apply card-dark transition-all duration-200 hover:bg-white/[0.07] hover:border-white/[0.14]; }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg text-sm font-medium
+           transition-colors duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    background-color: var(--btn-primary-bg);
+    color:            var(--btn-primary-text);
+    &:hover:not(:disabled) { background-color: var(--btn-primary-hover); }
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg text-sm font-medium
+           transition-colors duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    background-color: var(--bg-raised);
+    color:            var(--text-primary);
+    border: 1px solid var(--border);
+    &:hover:not(:disabled) {
+      background-color: var(--bg-muted);
+      border-color: var(--border-strong);
+    }
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg text-sm font-medium
+           transition-colors duration-150;
+    color: var(--text-secondary);
+    &:hover { background-color: var(--bg-raised); color: var(--text-primary); }
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-lg text-sm font-medium
+           bg-red-600 text-white hover:bg-red-700
+           transition-colors duration-150;
+  }
+
+  /* Hero/landing-specific (always dark background) */
+  .btn-dark-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-3 rounded-xl text-sm font-semibold
+           bg-white text-gray-900 hover:bg-gray-100
+           transition-colors duration-200;
+  }
+  .btn-dark-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-3 rounded-xl text-sm font-semibold
+           bg-transparent text-white/80 border border-white/15
+           hover:bg-white/[0.07] hover:text-white hover:border-white/25
+           transition-all duration-200;
+  }
+
+  /* ── Form elements ── */
+  .input {
+    @apply w-full px-3.5 py-2.5 text-sm rounded-lg
+           focus:outline-none focus:ring-2 focus:border-transparent
+           transition-all duration-150;
+    background-color: var(--input-bg);
+    color:            var(--input-text);
+    border: 1px solid var(--input-border);
+    --tw-ring-color:  var(--input-ring);
+    &::placeholder   { color: var(--input-placeholder); }
+  }
+  .input-error {
+    @apply border-red-400 focus:ring-red-400;
+  }
+  .label {
+    @apply block text-sm font-medium mb-1.5;
+    color: var(--text-secondary);
+  }
+
+  /* ── Badges ── */
+  .badge { @apply inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md; }
+  .badge-gray   { @apply badge bg-gray-100   text-gray-600   dark:bg-gray-800 dark:text-gray-400; }
+  .badge-dark   { @apply badge; background-color: var(--btn-primary-bg); color: var(--btn-primary-text); }
+  .badge-green  { @apply badge bg-green-50   text-green-700  dark:bg-green-950  dark:text-green-400; }
+  .badge-yellow { @apply badge bg-amber-50   text-amber-700  dark:bg-amber-950  dark:text-amber-400; }
+  .badge-red    { @apply badge bg-red-50     text-red-700    dark:bg-red-950    dark:text-red-400; }
+  .badge-blue   { @apply badge bg-gray-100   text-gray-700   dark:bg-gray-800   dark:text-gray-300; }
+  .badge-brand  { @apply badge bg-gray-100   text-gray-700   dark:bg-gray-800   dark:text-gray-300; }
+
+  /* ── Skeleton ── */
+  .skeleton { @apply rounded animate-pulse; background-color: var(--bg-muted); }
+
+  /* ── Scrollbar ── */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-muted) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar        { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-track  { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb  { background: var(--bg-muted); border-radius: 4px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TAILWIND UTILITY OVERRIDES
+   Force the most-used hardcoded classes to respect CSS variables.
+   This means components that use bg-white / bg-gray-50 / text-gray-900
+   directly in JSX will also switch correctly in dark mode.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Page background */
+.bg-white       { background-color: var(--bg-surface)   !important; }
+.bg-gray-50     { background-color: var(--bg-base)      !important; }
+.bg-gray-100    { background-color: var(--bg-raised)    !important; }
+
+/* Text */
+.text-gray-900  { color: var(--text-primary)   !important; }
+.text-gray-800  { color: var(--text-primary)   !important; }
+.text-gray-700  { color: var(--text-secondary) !important; }
+.text-gray-600  { color: var(--text-secondary) !important; }
+.text-gray-500  { color: var(--text-muted)     !important; }
+.text-gray-400  { color: var(--text-muted)     !important; }
+
+/* Borders */
+.border-gray-200 { border-color: var(--border)        !important; }
+.border-gray-100 { border-color: var(--border)        !important; }
+.divide-gray-100 > * + * { border-color: var(--border) !important; }
+.divide-gray-200 > * + * { border-color: var(--border) !important; }
+
+/* Hover backgrounds */
+.hover\:bg-gray-50:hover   { background-color: var(--bg-raised) !important; }
+.hover\:bg-gray-100:hover  { background-color: var(--bg-muted)  !important; }
+
+/* ── Exceptions: landing page sections must stay dark regardless ── */
+/* These sections are always dark-themed and must not be affected   */
+.bg-gray-950,
+.bg-gray-950 * {
+  /* No override — these are intentionally dark */
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}

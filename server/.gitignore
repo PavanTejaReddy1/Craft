@@ -1,0 +1,19 @@
+# Server Environment
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+!uploads/milestones/
+!uploads/profiles/
+!uploads/projects/
