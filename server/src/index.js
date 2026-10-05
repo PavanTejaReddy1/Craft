@@ -39,8 +39,26 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://craft-lime-seven.vercel.app',
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      origin.startsWith('http://localhost:')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -80,6 +98,49 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'CRAFT API is running successfully',
+    status: 'healthy',
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      apiBase: '/api/v1',
+    },
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'CRAFT API is running',
+    status: 'healthy',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'CRAFT API Base',
+    apiBase: '/api/v1',
+  });
+});
+
+app.get('/api/v1', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'CRAFT API v1',
+    status: 'healthy',
+  });
+});
+
 app.use('/api/v1/auth',          authRoutes);
 app.use('/api/v1/profile',       profileRoutes);
 app.use('/api/v1/projects',      projectRoutes);
@@ -89,18 +150,8 @@ app.use('/api/v1/messages',      messageRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/reviews',       reviewRoutes);
 app.use('/api/v1/admin',         adminRoutes);
-app.use('/api/v1/reports',    reportRoutes);
-app.use('/api/v1/inquiries', inquiryRoutes);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'CRAFT API is running',
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString(),
-  });
-});
+app.use('/api/v1/reports',       reportRoutes);
+app.use('/api/v1/inquiries',     inquiryRoutes);
 
 // 404
 app.use('*', (req, res) => {
